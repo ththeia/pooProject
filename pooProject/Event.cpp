@@ -176,10 +176,6 @@ public:
         return out;
     }
 
-
-    operator string() const {
-        return "Event: " + name + " - Date: " + date + " - Time: " + time;
-    }
 };
 
 class Ticket {
@@ -350,5 +346,6 @@ void main() {
     else {
         cout << "Invalid ticket details entered.\n";
     }
+
 
 };
