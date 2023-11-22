@@ -3,6 +3,8 @@
 
 using namespace std;
 
+enum TicketType { VIP, MAIN_STAGE, LOUNGE, STANDING };
+
 class Event {
 private:
     string name;
@@ -13,7 +15,6 @@ private:
 
     //static int totalEvents;
     const int DEFAULT_MAX_SEATS;
-
 
 public:
     Event() : DEFAULT_MAX_SEATS(50) {
@@ -181,6 +182,133 @@ public:
     }
 };
 
+class Ticket {
+private:
+    TicketType type;
+    int seatNumber;
+    string eventDate;
+    string eventName;
+    int totalTickets;
+    int ticketCounter;
+    int ticketID;
+    //to add * field 
+
+public:
+    Ticket() {
+        type = VIP;
+        seatNumber = 0;
+        eventDate = "";
+        eventName = "";
+        totalTickets = 0;
+        ticketCounter = 0;
+        ticketID = 0;
+    }
+
+    Ticket(TicketType type, int seatNumber, string eventDate, string eventName) {
+
+        this->type = type;
+        this->seatNumber = seatNumber;
+        this->eventDate = eventDate;
+        this->eventName = eventName;
+        totalTickets = 0;
+        ticketCounter = 0;
+        ticketID = 0;
+
+        totalTickets++;
+        ticketCounter++;
+        this->ticketID = ticketCounter;
+
+
+    }
+
+    Ticket(const Ticket& t) {
+        type = t.type;
+        seatNumber = t.seatNumber;
+        eventDate = t.eventDate;
+        eventName = t.eventName;
+        totalTickets = t.totalTickets;
+        ticketCounter = t.ticketCounter;
+        ticketID = t.ticketID;
+    }
+
+    ~Ticket() {
+        totalTickets--;
+    }
+
+    TicketType getType() {
+        return type;
+    }
+
+    int getSeatNumber() {
+        return seatNumber;
+    }
+
+    string getEventDate() {
+        return eventDate;
+    }
+
+    string getEventName() {
+        return eventName;
+    }
+
+    int getTicketID() {
+        return ticketID;
+    }
+
+    int getTotalTickets() {
+        return totalTickets;
+    }
+
+
+    void setType(TicketType newType) {
+
+        type = newType;
+    }
+
+  
+
+    void setEventDate(string newEventDate) {
+
+        eventDate = newEventDate;
+    }
+
+    void setEventName(string newEventName) {
+
+        eventName = newEventName;
+    }
+
+
+    friend ostream& operator<<(ostream& out, const Ticket& ticket) {
+        out << "Ticket ID: " << ticket.ticketID << endl;
+        out << "Type: " << ticket.type << endl;
+        out << "Seat Number: " << ticket.seatNumber << endl;
+        out << "Event Date: " << ticket.eventDate << endl;
+        out << "Event Name: " << ticket.eventName << endl;
+        return out;
+    }
+
+
+    friend istream& operator>>(istream& in, Ticket& ticket) {
+        cout << "Enter ticket type (VIP, MAIN_STAGE, LOUNGE, STANDING): ";
+        int typeInt;
+        in >> typeInt;
+
+        cout << "Enter seat number: ";
+        in >> ticket.seatNumber;
+        cout << "Enter event date: ";
+        in >> ticket.eventDate;
+        cout << "Enter event name: ";
+        in >> ticket.eventName;
+
+        // santa maria why it doesnt work check tmrw
+        //totalTickets++;
+        ticket.ticketCounter++;
+        ticket.ticketID = ticket.ticketCounter;
+
+        return in;
+    }
+};
+
 
 void main() {
 
@@ -198,7 +326,6 @@ void main() {
     Event event2("Event 2", "2023-11-05", "15:00", 100);
     cout << "Event Details:\n" << event2;
 
-
     // copy constructor
     Event event3(event1);
     cout << "Event 3 (Copy of Event 1) Details:\n" << event3;
@@ -210,5 +337,18 @@ void main() {
 
     event2 = event3 = event1;
 
+    // Test ticket class
+    Ticket ticket1(VIP, 1, "2023-11-05", "Event 1");
+    cout << "Ticket 1 Details:\n" << ticket1;
+
+    Ticket ticket2;
+    cin >> ticket2;
+
+    if (ticket2.getTotalTickets() > 0) {
+        cout << "Ticket 2 Details:\n" << ticket2;
+    }
+    else {
+        cout << "Invalid ticket details entered.\n";
+    }
 
 };
