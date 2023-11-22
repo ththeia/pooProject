@@ -12,13 +12,11 @@ private:
     int* seatNumbers;
 
     //static int totalEvents;
-
-public:
-    const int DEFAULT_MAX_SEATS = 50;
+    const int DEFAULT_MAX_SEATS;
 
 
 public:
-    Event() {
+    Event() : DEFAULT_MAX_SEATS(50) {
         name = "";
         date = "";
         time = "";
@@ -26,7 +24,7 @@ public:
         seatNumbers = nullptr;
     }
 
-    Event(string name, string date, string time, int maxSeats) {
+    Event(string name, string date, string time, int maxSeats) : DEFAULT_MAX_SEATS(DEFAULT_MAX_SEATS) {
         this->name = name;
         this->date = date;
         this->time = time;
@@ -68,7 +66,7 @@ public:
     }
 
 
-    Event(const Event& e) {
+    Event(const Event& e): DEFAULT_MAX_SEATS(e.DEFAULT_MAX_SEATS) {
         this->name = e.name;
         this->date = e.date;
         this->time = e.time;
@@ -144,7 +142,7 @@ public:
             cout << "Error: Maximum seats must be a positive number." << endl;
         }
     }
-    bool isValid() const {
+    bool isValid() {
         return !this->name.empty() && !this->date.empty() && !this->time.empty() && this->maxSeats > 0;
     }
 
