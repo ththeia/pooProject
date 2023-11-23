@@ -305,6 +305,134 @@ public:
     }
 };
 
+class Buyer {
+private:
+    string buyerName;
+    string buyerEmail;
+    string buyerPhoneNumber;
+    int age;
+    int ticketId;
+
+public:
+   
+    Buyer() {
+        buyerName = "";
+        buyerEmail = "";
+        buyerPhoneNumber = "";
+        age = 0;
+        ticketId = 0;
+    }
+
+    Buyer(string name, string email, string phoneNumber, int age, int ticketId) {
+        buyerName = name;
+        buyerEmail = email;
+        buyerPhoneNumber = phoneNumber;
+        this->age = age;
+        this->ticketId = ticketId;
+    }
+
+    
+    Buyer(const Buyer& b) {
+        buyerName = b.buyerName;
+        buyerEmail = b.buyerEmail;
+        buyerPhoneNumber = b.buyerPhoneNumber;
+        age = b.age;
+        ticketId = b.ticketId;
+    }
+
+    
+    ~Buyer() {
+        
+    }
+
+    
+    string getBuyerName() {
+        return buyerName;
+    }
+
+    string getBuyerEmail() {
+        return buyerEmail;
+    }
+
+    string getBuyerPhoneNumber()  {
+        return buyerPhoneNumber;
+    }
+
+    int getAge() {
+        return age;
+    }
+
+    int getTicketId() {
+        return ticketId;
+    }
+
+    void setBuyerName(string name) {
+        buyerName = name;
+    }
+
+    void setBuyerEmail(string email) {
+        buyerEmail = email;
+    }
+
+    void setBuyerPhoneNumber(string phoneNumber) {
+        buyerPhoneNumber = phoneNumber;
+    }
+
+    void setAge(int newAge) {
+        if (newAge >= 14) {
+            age = newAge;
+        }
+        else {
+            cout << "Error: Only people above 14 can participate to this event." << endl;
+        }
+    }
+
+    void setTicketId(int newTicketId) {
+        ticketId = newTicketId;
+    }
+
+    
+    Buyer& operator=(const Buyer& b) {
+        if (this == &b) {
+            return *this;
+        }
+
+        buyerName = b.buyerName;
+        buyerEmail = b.buyerEmail;
+        buyerPhoneNumber = b.buyerPhoneNumber;
+        age = b.age;
+        ticketId = b.ticketId;
+
+        return *this;
+    }
+
+    
+    friend ostream& operator<<(ostream& out, const Buyer& buyer) {
+        out << "Buyer Name: " << buyer.buyerName << endl;
+        out << "Buyer Email: " << buyer.buyerEmail << endl;
+        out << "Buyer Phone Number: " << buyer.buyerPhoneNumber << endl;
+        out << "Age: " << buyer.age << endl;
+        out << "Ticket ID: " << buyer.ticketId << endl;
+        return out;
+    }
+
+    
+    friend istream& operator>>(istream& in, Buyer& buyer) {
+        cout << "Enter buyer name: ";
+        getline(in, buyer.buyerName);
+        cout << "Enter buyer email: ";
+        getline(in, buyer.buyerEmail);
+        cout << "Enter buyer phone number: ";
+        getline(in, buyer.buyerPhoneNumber);
+        cout << "Enter age: ";
+        in >> buyer.age;
+        cout << "Enter ticket ID: ";
+        in >> buyer.ticketId;
+
+        return in;
+    }
+};
+
 
 void main() {
 
