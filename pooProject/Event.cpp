@@ -186,21 +186,23 @@ private:
     string eventName;
     int totalTickets;
     int ticketCounter;
+    double price;
     int ticketID;
     //to add * field 
 
 public:
     Ticket() {
-        type = VIP;
+        type = STANDING;
         seatNumber = 0;
         eventDate = "";
         eventName = "";
         totalTickets = 0;
         ticketCounter = 0;
         ticketID = 0;
+        price = 0;
     }
 
-    Ticket(TicketType type, int seatNumber, string eventDate, string eventName) {
+    Ticket(TicketType type, int seatNumber, string eventDate, string eventName, double price) {
 
         this->type = type;
         this->seatNumber = seatNumber;
@@ -213,18 +215,20 @@ public:
         totalTickets++;
         ticketCounter++;
         this->ticketID = ticketCounter;
+        this->price = price;
 
 
     }
 
     Ticket(const Ticket& t) {
-        type = t.type;
-        seatNumber = t.seatNumber;
-        eventDate = t.eventDate;
-        eventName = t.eventName;
-        totalTickets = t.totalTickets;
-        ticketCounter = t.ticketCounter;
-        ticketID = t.ticketID;
+        this->type = t.type;
+        this->seatNumber = t.seatNumber;
+        this->eventDate = t.eventDate;
+        this->eventName = t.eventName;
+        this->totalTickets = t.totalTickets;
+        this->ticketCounter = t.ticketCounter;
+        this->ticketID = t.ticketID;
+        this->price = t.price;
     }
 
     ~Ticket() {
@@ -280,6 +284,7 @@ public:
         out << "Seat Number: " << ticket.seatNumber << endl;
         out << "Event Date: " << ticket.eventDate << endl;
         out << "Event Name: " << ticket.eventName << endl;
+        out << "Ticket Price: " << ticket.price << endl;
         return out;
     }
 
@@ -300,6 +305,8 @@ public:
         //totalTickets++;
         ticket.ticketCounter++;
         ticket.ticketID = ticket.ticketCounter;
+        cout << "Enter ticket price: ";
+        in >> ticket.price;
 
         return in;
     }
@@ -462,7 +469,7 @@ void main() {
     event2 = event3 = event1;
 
     // Test ticket class
-    Ticket ticket1(VIP, 1, "2023-11-05", "Event 1");
+    Ticket ticket1(VIP, 1, "2023-11-05", "Event 1", 200);
     cout << "Ticket 1 Details:\n" << ticket1;
 
     Ticket ticket2;
