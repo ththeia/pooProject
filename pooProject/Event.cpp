@@ -474,6 +474,20 @@ void main() {
     else {
         cout << "Invalid ticket details entered.\n";
     }
-     
+    // Test Buyer class
+    Buyer buyer1;
+    cin >> buyer1;
+
+    cout << "Buyer 1 Details:\n" << buyer1;
+
+    Buyer buyer2("John Doe", "john@yahoo.com", "1234567890", 25, 101);
+    cout << "Buyer 2 Details:\n" << buyer2;
+
+
+    // Assignment operator
+    Buyer buyer4;
+    buyer4 = buyer2;
+    cout << "Buyer 4 (Copy of Buyer 2) Details:\n" << buyer4;
+
 
 };
