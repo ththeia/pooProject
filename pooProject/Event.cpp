@@ -474,6 +474,6 @@ void main() {
     else {
         cout << "Invalid ticket details entered.\n";
     }
-
+     
 
 };
