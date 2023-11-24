@@ -444,9 +444,9 @@ public:
         return out;
     }
 
-    
     friend istream& operator>>(istream& in, Buyer& buyer) {
         cout << "Enter buyer name: ";
+       // in.ignore(); 
         getline(in, buyer.buyerName);
         cout << "Enter buyer email: ";
         getline(in, buyer.buyerEmail);
