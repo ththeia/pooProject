@@ -13,7 +13,7 @@ private:
     int maxSeats;
     int* seatNumbers;
 
-    //static int totalEvents;
+   // static int totalEvents;
     const int DEFAULT_MAX_SEATS;
 
 public:
@@ -37,7 +37,7 @@ public:
         else {
             this->seatNumbers = nullptr;
         }
-        //totalEvents++;
+       // totalEvents++;
     }
 
     Event& operator=(const Event& o) {
@@ -231,6 +231,7 @@ public:
         this->price = t.price;
     }
 
+   
     ~Ticket() {
         totalTickets--;
     }
@@ -259,6 +260,10 @@ public:
         return totalTickets;
     }
 
+    double getPrice()  {
+        return price;
+    }
+
 
     void setType(TicketType newType) {
 
@@ -278,6 +283,12 @@ public:
     }
 
 
+    Ticket operator+(const Ticket& plus) const {
+        Ticket result = *this;
+        result.price += plus.price;
+        return result;
+    }
+
     friend ostream& operator<<(ostream& out, const Ticket& ticket) {
         out << "Ticket ID: " << ticket.ticketID << endl;
         out << "Type: " << ticket.type << endl;
@@ -288,28 +299,38 @@ public:
         return out;
     }
 
-
     friend istream& operator>>(istream& in, Ticket& ticket) {
-        cout << "Enter ticket type (VIP, MAIN_STAGE, LOUNGE, STANDING): ";
         int typeInt;
+
+        cout << "Enter ticket type (0 for VIP, 1 for MAIN_STAGE, 2 for LOUNGE, 3 for STANDING): ";
         in >> typeInt;
+
+        if (typeInt >= 0 && typeInt <= 3) {
+            ticket.type = static_cast<TicketType>(typeInt);
+        }
+        else {
+            cout << "Invalid ticket type. Setting to STANDING." << endl;
+            ticket.type = STANDING;
+        }
 
         cout << "Enter seat number: ";
         in >> ticket.seatNumber;
+
         cout << "Enter event date: ";
         in >> ticket.eventDate;
-        cout << "Enter event name: ";
-        in >> ticket.eventName;
 
-        // santa maria why it doesnt work check tmrw
-        //totalTickets++;
-        ticket.ticketCounter++;
-        ticket.ticketID = ticket.ticketCounter;
+        cout << "Enter event name: ";
+       // in.ignore();
+        getline(in, ticket.eventName);
+
         cout << "Enter ticket price: ";
         in >> ticket.price;
 
         return in;
     }
+   
+
+   
 };
 
 class Buyer {
@@ -469,6 +490,7 @@ void main() {
     event2 = event3 = event1;
 
     // Test ticket class
+    Ticket myTicket;
     Ticket ticket1(VIP, 1, "2023-11-05", "Event 1", 200);
     cout << "Ticket 1 Details:\n" << ticket1;
 
