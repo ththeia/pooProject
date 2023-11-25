@@ -24,7 +24,30 @@ public:
     }
 
     bool isValid() const {
-        return day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 1900; 
+        if (year < 1900) {
+            return false; 
+        }
+        if (month < 1 || month > 12) {
+            return false;
+        }
+
+        if (day < 1 || day > 31) {
+            return false;
+        }
+
+        if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+            return false;
+        }
+        if (month == 2) {
+            if (day > 29) {
+                return false;
+            }
+
+            if (day == 29 && (year % 4 != 0 || (year % 100 == 0 && year % 400 != 0))) {
+                return false; 
+            }
+        }
+        return true;
     }
 
     friend istream& operator>>(istream& in, Date& date) {
@@ -60,7 +83,7 @@ class Event {
 private:
     string name;
     Date date;
-    string time;
+    int duration;
     int maxSeats;
     int* seatNumbers;
     const int DEFAULT_MAX_SEATS;
@@ -71,16 +94,16 @@ public:
     Event() : DEFAULT_MAX_SEATS(50) {
         name = "";
         date = Date();
-        time = "";
+        duration = 0;
         maxSeats = 0;
         seatNumbers = nullptr;
         totalEvents++;
     }
 
-    Event(string name, int day, int month, int year, string time, int maxSeats) : DEFAULT_MAX_SEATS(DEFAULT_MAX_SEATS) {
+    Event(string name, int day, int month, int year, int duration, int maxSeats) : DEFAULT_MAX_SEATS(DEFAULT_MAX_SEATS) {
         this->name = name;
         this->date = Date(day, month, year); 
-        this->time = time;
+        this->duration = duration;
         this->maxSeats = maxSeats;
 
         if (maxSeats > 0) {
@@ -95,7 +118,7 @@ public:
     Event(const Event& e) : DEFAULT_MAX_SEATS(e.DEFAULT_MAX_SEATS) {
         this->name = e.name;
         this->date = e.date;
-        this->time = e.time;
+        this->duration = e.duration;
         this->maxSeats = e.maxSeats;
 
         if (e.seatNumbers != nullptr) {
@@ -115,7 +138,7 @@ public:
         }
         this->name = o.name;
         this->date = o.date;
-        this->time = o.time;
+        this->duration = o.duration;
         this->maxSeats = o.maxSeats;
 
         delete[] this->seatNumbers;
@@ -143,8 +166,8 @@ public:
     }
 
 
-    string getTime() {
-        return this->time;
+    int getTime() {
+        return this->duration;
     }
 
     int getMaxSeats() {
@@ -166,8 +189,18 @@ public:
         this->name = name;
     }
 
-    void setTime(string time) {
-        this->time = time;
+    void setDuration(int duration) {
+        if (duration >= 0) {
+            if (this->duration <= duration) {
+                this->duration = duration;
+            }
+            else {
+                cout << "Error: New duration must be greater than or equal to the current duration." << endl;
+            }
+        }
+        else {
+            cout << "Error: Duration must be a non-negative number." << endl;
+        }
     }
 
     void setMaxSeats(int newMaxSeats) {
@@ -196,8 +229,14 @@ public:
     }
 
     bool isValid() {
-        return !this->name.empty() && !this->time.empty() && this->date.isValid() && this->maxSeats > 0;
+        return !this->name.empty() && this->duration>0 && this->date.isValid() && this->maxSeats > 0;
     }
+
+    Event operator+(int minutes) const {
+        Event e = *this;
+        e.duration += minutes;
+        return e;
+    } 
 
     friend istream& operator>>(istream& in, Event& event) {
         cout << "Enter event name: ";
@@ -205,7 +244,7 @@ public:
         cout << "Enter event date:\n";
         in >> event.date;
         cout << "Enter event time: ";
-        in >> event.time;
+        in >> event.duration;
         cout << "Enter maximum number of seats: ";
         in >> event.maxSeats;
         if (event.maxSeats > 0) {
@@ -220,7 +259,7 @@ public:
     friend ostream& operator<<(ostream& out, const Event& event) {
         out << "Event Name: " << event.name << endl;
         out << "Event Date: " << event.date << endl;
-        out << "Event Time: " << event.time << endl;
+        out << "Event Time: " << event.duration << endl;
         out << "Maximum Seats: " << event.maxSeats << endl;
         return out;
     }
@@ -520,7 +559,7 @@ void main() {
     Date paramDate(25, 12, 2023);
     cout << "Date with Parameters: " << paramDate << endl;
 
-    Event event1("Music Festival", 10, 8, 2023, "20:00", 100);
+    Event event1("Music Festival", 10, 8, 2023, 60, 100);
     if (event1.isValid()) {
         cout << "Event Details:\n" << event1;
     }
@@ -528,7 +567,7 @@ void main() {
         cout << "Invalid event details entered.\n";
     }
 
-    Event event2("Untold", 25, 12, 2023, "18:00", 50);
+    Event event2("Untold", 25, 12, 2023, 120, 50);
     cout << "Event2:\n" << event2;
     cout << "Event Name: " << event2.getName() << endl;
     cout << "Event Time: " << event2.getTime() << endl;
@@ -550,9 +589,9 @@ void main() {
 
     event2 = event3 = event1;
 
-    Event event5("Sports Game", 5, 9, 2023, "15:30", 75);
+    Event event5("Sports Game", 5, 9, 2023, 15, 75);
     event5.setName("Updated Sports Game");
-    event5.setTime("17:00");
+    event5.setDuration(80);
     event5.setMaxSeats(100);
 
     if (event5.isValid()) {
@@ -561,6 +600,15 @@ void main() {
     else {
         cout << "Invalid event details entered.\n";
     }
+    // test static field
+    cout << "Total Events: " << Event::getTotalEvents() << endl;
+
+    //test +operator
+    Event original("My Event", 1, 1, 2023, 60, 100);
+    cout << "Original Event:\n" << original;
+
+    Event newEvent = original + 15;
+    cout << "New event duration:\n" << newEvent;
 
     //test istream
     Date inputDate;
@@ -573,8 +621,10 @@ void main() {
     cin >> inputEvent;
     cout << "Entered event details:\n" << inputEvent;
 
-    // test static field
-    cout << "Total Events: " << Event::getTotalEvents() << endl;
+ 
+
+
+  
 
     //// Test ticket class
     //Ticket myTicket;
