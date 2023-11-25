@@ -41,9 +41,19 @@ public:
     }
 
     friend ostream& operator<<(ostream& out, const Date& date) {
-        out << date.day << "-" << date.month << "-" << date.year;
+        if (date.day < 10) {
+            out << '0';
+        }
+        out << date.day << "-";
+
+        if (date.month < 10) {
+            out << '0';
+        }
+        out << date.month << "-" << date.year;
+
         return out;
     }
+    
 };
 
 class Event {
@@ -55,6 +65,8 @@ private:
     int* seatNumbers;
     const int DEFAULT_MAX_SEATS;
 
+    static int totalEvents;
+
 public:
     Event() : DEFAULT_MAX_SEATS(50) {
         name = "";
@@ -62,6 +74,7 @@ public:
         time = "";
         maxSeats = 0;
         seatNumbers = nullptr;
+        totalEvents++;
     }
 
     Event(string name, int day, int month, int year, string time, int maxSeats) : DEFAULT_MAX_SEATS(DEFAULT_MAX_SEATS) {
@@ -76,6 +89,7 @@ public:
         else {
             this->seatNumbers = nullptr;
         }
+        totalEvents++;
     }
 
     Event(const Event& e) : DEFAULT_MAX_SEATS(e.DEFAULT_MAX_SEATS) {
@@ -140,9 +154,9 @@ public:
     int* getSeatNumbers() {
         return this->seatNumbers;
     }
-   /* static int getTotalEvents() {
+   static int getTotalEvents() {
         return totalEvents;
-    }*/
+    }
 
     int getDefaultMaxSeats() const {
         return DEFAULT_MAX_SEATS;
@@ -171,6 +185,16 @@ public:
             cout << "Error: Maximum seats must be a positive number." << endl;
         }
     }
+
+    static void setTotalEvents(int newTotalEvents) {
+        if (newTotalEvents >= 0) {
+            totalEvents = newTotalEvents;
+        }
+        else {
+            cout << "Error: Total events must be a non-negative number." << endl;
+        }
+    }
+
     bool isValid() {
         return !this->name.empty() && !this->time.empty() && this->date.isValid() && this->maxSeats > 0;
     }
@@ -202,6 +226,7 @@ public:
     }
 
 };
+int Event::totalEvents = 0;
 
 //class Ticket {
 //private:
@@ -547,6 +572,9 @@ void main() {
     cout << "\nEnter event details:\n";
     cin >> inputEvent;
     cout << "Entered event details:\n" << inputEvent;
+
+    // test static field
+    cout << "Total Events: " << Event::getTotalEvents() << endl;
 
     //// Test ticket class
     //Ticket myTicket;
