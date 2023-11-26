@@ -51,7 +51,17 @@ public:
         }
         return true;
     }
+    int getDay() {
+        return day;
+    }
 
+    int getMonth() {
+        return month;
+    }
+
+    int getYear()  {
+        return year;
+    }
     friend istream& operator>>(istream& in, Date& date) {
         cout << "Enter day: ";
         in >> date.day;
@@ -117,6 +127,13 @@ public:
         totalEvents++;
     }
 
+    Event(string name, const Date& date, int duration) : DEFAULT_MAX_SEATS(DEFAULT_MAX_SEATS) {
+        this->name = name;
+        this->date = date;
+        this->duration = duration;
+        totalEvents++;
+    }
+
     Event(const Event& e) : DEFAULT_MAX_SEATS(e.DEFAULT_MAX_SEATS) {
         this->name = e.name;
         this->date = e.date;
@@ -132,6 +149,16 @@ public:
         else {
             this->seatNumbers = nullptr;
         }
+    }
+
+    bool operator==(Event& compare) {
+        return name == compare.name &&
+            date.getDay() == compare.date.getDay() &&
+            date.getMonth() == compare.date.getMonth() &&
+            date.getYear() == compare.date.getYear() &&
+            duration == compare.duration &&
+            seats == compare.seats &&
+            DEFAULT_MAX_SEATS == compare.DEFAULT_MAX_SEATS;
     }
 
     Event& operator=(const Event& o) {
@@ -168,7 +195,6 @@ public:
         return this->name;
     }
 
-
     int getTime() {
         return this->duration;
     }
@@ -188,6 +214,11 @@ public:
         return DEFAULT_MAX_SEATS;
 
     }
+
+    Date getDate() {
+        return this->date;
+    }
+
     void setName(string name) {
         this->name = name;
     }
@@ -234,6 +265,7 @@ public:
     bool isValid() {
         return !this->name.empty() && this->duration>0 && this->date.isValid() && this->seats > 0;
     }
+
     Event& operator++() {
         ++seats;
         int* newSeatNumbers = new int[seats]();
@@ -245,12 +277,36 @@ public:
         return *this;
     }
 
+    Event operator++(int) {
+        Event e = *this;
+        duration++;
+        return e;
+    }
 
-    Event operator+(int minutes) const {
+    Event operator+(int minutes){
         Event e = *this;
         e.duration += minutes;
         return e;
     } 
+
+   
+
+    bool operator!()  {
+        return name.length() <= 2;
+    }
+
+    void showEvent() {
+        cout << "Event " << name << " on " << date << " lasts for " << duration << " minutes and has " << seats << " places available.\n";
+        
+    }
+
+    void displayEventInfo() {
+        cout << "Event Name: " << getName() << endl;
+        cout << "Event Duration: " << getTime() << " minutes" << endl;
+        cout << "Event Date: " << getDate() << endl;
+        cout << "Total Events So Far: " << getTotalEvents() << endl;
+    }
+
 
     friend istream& operator>>(istream& in, Event& event) {
         cout << "Enter event name: ";
@@ -581,6 +637,9 @@ void main() {
         cout << "Invalid event details entered.\n";
     }
 
+    Date eventDate(25, 12, 2023);
+    Event constParam2("Constructor 2", eventDate, 90);
+
     Event event2("Untold", 25, 12, 2023, 120, 50);
     cout << "Event2:\n" << event2;
     cout << "Event Name: " << event2.getName() << endl;
@@ -618,17 +677,36 @@ void main() {
     cout << "Total Events: " << Event::getTotalEvents() << endl;
 
     //test +operator
-    Event original("My Event", 1, 1, 2023, 60, 100);
+    Event original("Original", 1, 1, 2023, 60, 100);
     cout << "Original Event:\n" << original;
 
     Event newEvent = original + 15;
     cout << "New event duration:\n" << newEvent;
 
 
-    Event opPPtest("Example Event", 1, 1, 2023, 60, 100);
+    Event opPPtest("Opp", 1, 1, 2023, 60, 100);
     cout << "Initial Seats: " << opPPtest.getMaxSeats() << endl;
     ++opPPtest; 
     cout << "Updated Seats: " << opPPtest.getMaxSeats() << endl;
+
+
+    Event event6("Bool! test", 1, 1, 2023, 60, 100);
+    if (!event6) {
+        cout << "Event name is too short!" << endl;
+    }
+    else {
+        cout << "Event name is valid." << endl;
+    }
+
+    event6.showEvent();
+    event6.displayEventInfo();
+
+    if (event3 == event6) {
+        cout << "Events are the same." << endl;
+    }
+    else {
+        cout << "Events are not the same." << endl;
+    }
 
     //test istream
     Date inputDate;
