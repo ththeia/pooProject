@@ -3,7 +3,9 @@
 
 using namespace std;
 
+
 //enum TicketType { VIP, MAIN_STAGE, LOUNGE, STANDING };
+
 class Date {
 private:
     int day;
@@ -84,8 +86,8 @@ private:
     string name;
     Date date;
     int duration;
-    int maxSeats;
-    int* seatNumbers;
+    int seats;
+    int* seatNumbers; 
     const int DEFAULT_MAX_SEATS;
 
     static int totalEvents;
@@ -95,7 +97,7 @@ public:
         name = "";
         date = Date();
         duration = 0;
-        maxSeats = 0;
+        seats = 0;
         seatNumbers = nullptr;
         totalEvents++;
     }
@@ -104,7 +106,7 @@ public:
         this->name = name;
         this->date = Date(day, month, year); 
         this->duration = duration;
-        this->maxSeats = maxSeats;
+        this->seats = maxSeats;
 
         if (maxSeats > 0) {
             this->seatNumbers = new int[maxSeats]();
@@ -119,11 +121,11 @@ public:
         this->name = e.name;
         this->date = e.date;
         this->duration = e.duration;
-        this->maxSeats = e.maxSeats;
+        this->seats = e.seats;
 
         if (e.seatNumbers != nullptr) {
-            this->seatNumbers = new int[e.maxSeats]();
-            for (int i = 0; i < e.maxSeats; i++) {
+            this->seatNumbers = new int[e.seats]();
+            for (int i = 0; i < e.seats; i++) {
                 this->seatNumbers[i] = e.seatNumbers[i];
             }
         }
@@ -139,13 +141,13 @@ public:
         this->name = o.name;
         this->date = o.date;
         this->duration = o.duration;
-        this->maxSeats = o.maxSeats;
+        this->seats = o.seats;
 
         delete[] this->seatNumbers;
 
         if (o.seatNumbers != nullptr) {
-            this->seatNumbers = new int[o.maxSeats]();
-            for (int i = 0; i < o.maxSeats; i++) {
+            this->seatNumbers = new int[o.seats]();
+            for (int i = 0; i < o.seats; i++) {
                 this->seatNumbers[i] = o.seatNumbers[i];
             }
         }
@@ -161,6 +163,7 @@ public:
             delete[] this->seatNumbers;
         }
     }
+
     string getName() {
         return this->name;
     }
@@ -171,7 +174,7 @@ public:
     }
 
     int getMaxSeats() {
-        return this->maxSeats;
+        return this->seats;
     }
 
     int* getSeatNumbers() {
@@ -203,12 +206,12 @@ public:
         }
     }
 
-    void setMaxSeats(int newMaxSeats) {
-        if (newMaxSeats >= 0) {
-            this->maxSeats = newMaxSeats;
+    void setMaxSeats(int seats) {
+        if (seats >= 0) {
+            this->seats = seats;
             delete[] this->seatNumbers;
-            if (newMaxSeats > 0) {
-                this->seatNumbers = new int[newMaxSeats];
+            if (seats > 0) {
+                this->seatNumbers = new int[seats];
             }
             else {
                 this->seatNumbers = nullptr;
@@ -229,8 +232,19 @@ public:
     }
 
     bool isValid() {
-        return !this->name.empty() && this->duration>0 && this->date.isValid() && this->maxSeats > 0;
+        return !this->name.empty() && this->duration>0 && this->date.isValid() && this->seats > 0;
     }
+    Event& operator++() {
+        ++seats;
+        int* newSeatNumbers = new int[seats]();
+        for (int i = 0; i < seats - 1; ++i) {
+            newSeatNumbers[i] = seatNumbers[i];
+        }
+        delete[] seatNumbers;
+        seatNumbers = newSeatNumbers;
+        return *this;
+    }
+
 
     Event operator+(int minutes) const {
         Event e = *this;
@@ -246,9 +260,9 @@ public:
         cout << "Enter event time: ";
         in >> event.duration;
         cout << "Enter maximum number of seats: ";
-        in >> event.maxSeats;
-        if (event.maxSeats > 0) {
-            event.seatNumbers = new int[event.maxSeats];
+        in >> event.seats;
+        if (event.seats > 0) {
+            event.seatNumbers = new int[event.seats];
         }
         else {
             event.seatNumbers = nullptr;
@@ -260,7 +274,7 @@ public:
         out << "Event Name: " << event.name << endl;
         out << "Event Date: " << event.date << endl;
         out << "Event Time: " << event.duration << endl;
-        out << "Maximum Seats: " << event.maxSeats << endl;
+        out << "Maximum Seats: " << event.seats << endl;
         return out;
     }
 
@@ -610,6 +624,12 @@ void main() {
     Event newEvent = original + 15;
     cout << "New event duration:\n" << newEvent;
 
+
+    Event opPPtest("Example Event", 1, 1, 2023, 60, 100);
+    cout << "Initial Seats: " << opPPtest.getMaxSeats() << endl;
+    ++opPPtest; 
+    cout << "Updated Seats: " << opPPtest.getMaxSeats() << endl;
+
     //test istream
     Date inputDate;
     cout << "Enter a date:\n";
@@ -621,11 +641,7 @@ void main() {
     cin >> inputEvent;
     cout << "Entered event details:\n" << inputEvent;
 
- 
-
-
   
-
     //// Test ticket class
     //Ticket myTicket;
     //Ticket ticket1(VIP, 1, "2023-11-05", "Event 1", 200);
