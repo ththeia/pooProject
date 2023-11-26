@@ -580,6 +580,28 @@ public:
         return eventName.empty() || buyerName.empty() || price <= 0;
     }
 
+   /* Ticket operator==(Ticket& t1, Ticket& t2) {
+        return t1.getEventName() == t2.getEventName() &&
+            t1.getBuyerName() == t2.getBuyerName() &&
+            t1.getDate() == t2.getDate() &&
+            t1.getDuration() == t2.getDuration() &&
+            t1.getSeatNumber() == t2.getSeatNumber() &&
+            t1.getTicketType() == t2.getTicketType() &&
+            t1.getPrice() == t2.getPrice() &&
+            t1.getRowDesc() == t2.getRowDesc();
+
+        if (t1.getRowDesc() != t2.getRowDesc()) {
+            return false;
+        }
+        for (int i = 0; i < t1.getRowDesc(); ++i) {
+            if (t1.getEventDescription()[i] != t2.getEventDescription()[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }*/
+
     friend ostream& operator<<(ostream& out, Ticket& ticket) {
         out << "Event Name: " << ticket.getEventName() << endl;
         out << "Buyer Name: " << ticket.getBuyerName() << endl;
@@ -617,7 +639,6 @@ public:
         cout << "Enter ticket type (0 for VIP, 1 for LOUNGE, 2 for STANDING): ";
         int ticketType;
         in >> ticketType;
-        ticket.type = static_cast<TicketType>(ticketType); 
         cout << "Enter price: $";
         in >> ticket.price;
         cout << "Enter the number of row descriptions: ";
@@ -641,134 +662,134 @@ public:
    
 };
 int Ticket::ticketCounter = 0;
-//
-//class Buyer {
-//private:
-//    string buyerName;
-//    string buyerEmail;
-//    string buyerPhoneNumber;
-//    int age;
-//    int ticketId;
-//
-//public:
-//   
-//    Buyer() {
-//        buyerName = "";
-//        buyerEmail = "";
-//        buyerPhoneNumber = "";
-//        age = 0;
-//        ticketId = 0;
-//    }
-//
-//    Buyer(string name, string email, string phoneNumber, int age, int ticketId) {
-//        buyerName = name;
-//        buyerEmail = email;
-//        buyerPhoneNumber = phoneNumber;
-//        this->age = age;
-//        this->ticketId = ticketId;
-//    }
-//
-//    
-//    Buyer(const Buyer& b) {
-//        buyerName = b.buyerName;
-//        buyerEmail = b.buyerEmail;
-//        buyerPhoneNumber = b.buyerPhoneNumber;
-//        age = b.age;
-//        ticketId = b.ticketId;
-//    }
-//
-//    
-//    ~Buyer() {
-//        
-//    }
-//
-//    
-//    string getBuyerName() {
-//        return buyerName;
-//    }
-//
-//    string getBuyerEmail() {
-//        return buyerEmail;
-//    }
-//
-//    string getBuyerPhoneNumber()  {
-//        return buyerPhoneNumber;
-//    }
-//
-//    int getAge() {
-//        return age;
-//    }
-//
-//    int getTicketId() {
-//        return ticketId;
-//    }
-//
-//    void setBuyerName(string name) {
-//        buyerName = name;
-//    }
-//
-//    void setBuyerEmail(string email) {
-//        buyerEmail = email;
-//    }
-//
-//    void setBuyerPhoneNumber(string phoneNumber) {
-//        buyerPhoneNumber = phoneNumber;
-//    }
-//
-//    void setAge(int newAge) {
-//        if (newAge >= 14) {
-//            age = newAge;
-//        }
-//        else {
-//            cout << "Error: Only people above 14 can participate to this event." << endl;
-//        }
-//    }
-//
-//    void setTicketId(int newTicketId) {
-//        ticketId = newTicketId;
-//    }
-//
-//    
-//    Buyer& operator=(const Buyer& b) {
-//        if (this == &b) {
-//            return *this;
-//        }
-//
-//        buyerName = b.buyerName;
-//        buyerEmail = b.buyerEmail;
-//        buyerPhoneNumber = b.buyerPhoneNumber;
-//        age = b.age;
-//        ticketId = b.ticketId;
-//
-//        return *this;
-//    }
-//
-//    
-//    friend ostream& operator<<(ostream& out, const Buyer& buyer) {
-//        out << "Buyer Name: " << buyer.buyerName << endl;
-//        out << "Buyer Email: " << buyer.buyerEmail << endl;
-//        out << "Buyer Phone Number: " << buyer.buyerPhoneNumber << endl;
-//        out << "Age: " << buyer.age << endl;
-//        out << "Ticket ID: " << buyer.ticketId << endl;
-//        return out;
-//    }
-//
-//    friend istream& operator>>(istream& in, Buyer& buyer) {
-//        cout << "Enter buyer name: ";
-//       // in.ignore(); 
-//        getline(in, buyer.buyerName);
-//        cout << "Enter buyer email: ";
-//        getline(in, buyer.buyerEmail);
-//        cout << "Enter buyer phone number: ";
-//        getline(in, buyer.buyerPhoneNumber);
-//        cout << "Enter age: ";
-//        in >> buyer.age;
-//        cout << "Enter ticket ID: ";
-//        in >> buyer.ticketId;
-//
-//        return in;
-//    }
-//};
+
+class Buyer {
+private:
+    string buyerName;
+    string buyerEmail;
+    string buyerPhoneNumber;
+    int age;
+    int ticketId;
+
+public:
+   
+    Buyer() {
+        buyerName = "";
+        buyerEmail = "";
+        buyerPhoneNumber = "";
+        age = 0;
+        ticketId = 0;
+    }
+
+    Buyer(string name, string email, string phoneNumber, int age, int ticketId) {
+        buyerName = name;
+        buyerEmail = email;
+        buyerPhoneNumber = phoneNumber;
+        this->age = age;
+        this->ticketId = ticketId;
+    }
+
+    
+    Buyer(const Buyer& b) {
+        buyerName = b.buyerName;
+        buyerEmail = b.buyerEmail;
+        buyerPhoneNumber = b.buyerPhoneNumber;
+        age = b.age;
+        ticketId = b.ticketId;
+    }
+
+    
+    ~Buyer() {
+        
+    }
+
+    
+    string getBuyerName() {
+        return buyerName;
+    }
+
+    string getBuyerEmail() {
+        return buyerEmail;
+    }
+
+    string getBuyerPhoneNumber()  {
+        return buyerPhoneNumber;
+    }
+
+    int getAge() {
+        return age;
+    }
+
+    int getTicketId() {
+        return ticketId;
+    }
+
+    void setBuyerName(string name) {
+        buyerName = name;
+    }
+
+    void setBuyerEmail(string email) {
+        buyerEmail = email;
+    }
+
+    void setBuyerPhoneNumber(string phoneNumber) {
+        buyerPhoneNumber = phoneNumber;
+    }
+
+    void setAge(int newAge) {
+        if (newAge >= 14) {
+            age = newAge;
+        }
+        else {
+            cout << "Error: Only people above 14 can participate to this event." << endl;
+        }
+    }
+
+    void setTicketId(int newTicketId) {
+        ticketId = newTicketId;
+    }
+
+    
+    Buyer& operator=(const Buyer& b) {
+        if (this == &b) {
+            return *this;
+        }
+
+        buyerName = b.buyerName;
+        buyerEmail = b.buyerEmail;
+        buyerPhoneNumber = b.buyerPhoneNumber;
+        age = b.age;
+        ticketId = b.ticketId;
+
+        return *this;
+    }
+
+    
+    friend ostream& operator<<(ostream& out, const Buyer& buyer) {
+        out << "Buyer Name: " << buyer.buyerName << endl;
+        out << "Buyer Email: " << buyer.buyerEmail << endl;
+        out << "Buyer Phone Number: " << buyer.buyerPhoneNumber << endl;
+        out << "Age: " << buyer.age << endl;
+        out << "Ticket ID: " << buyer.ticketId << endl;
+        return out;
+    }
+
+    friend istream& operator>>(istream& in, Buyer& buyer) {
+        cout << "Enter buyer name: ";
+       // in.ignore(); 
+        getline(in, buyer.buyerName);
+        cout << "Enter buyer email: ";
+        getline(in, buyer.buyerEmail);
+        cout << "Enter buyer phone number: ";
+        getline(in, buyer.buyerPhoneNumber);
+        cout << "Enter age: ";
+        in >> buyer.age;
+        cout << "Enter ticket ID: ";
+        in >> buyer.ticketId;
+
+        return in;
+    }
+};
 
 
 void main() {
@@ -914,25 +935,27 @@ void main() {
     cout << "Is Default Ticket Valid: " << (!defaultTicket ? "Invalid" : "Valid") << endl;
     cout << "Is VIP Ticket Valid: " << (!vipTicket ? "Invalid" : "Valid") << endl;
 
+
+    //test istream ticket
     Ticket inputTicket;
     cout << "\nEnter ticket details:\n";
     cin >> inputTicket;
     cout << "Entered ticket details:\n" << inputTicket;
 
-    //// Test Buyer class
-    //Buyer buyer1;
-    //cin >> buyer1;
+    // Test Buyer class
+    Buyer buyer1;
+    cin >> buyer1;
 
-    //cout << "Buyer 1 Details:\n" << buyer1;
+    cout << "Buyer 1 Details:\n" << buyer1;
 
-    //Buyer buyer2("John Doe", "john@yahoo.com", "1234567890", 25, 101);
-    //cout << "Buyer 2 Details:\n" << buyer2;
+    Buyer buyer2("John Doe", "john@yahoo.com", "1234567890", 25, 101);
+    cout << "Buyer 2 Details:\n" << buyer2;
 
 
-    //// Assignment operator
-    //Buyer buyer4;
-    //buyer4 = buyer2;
-    //cout << "Buyer 4 (Copy of Buyer 2) Details:\n" << buyer4;
+    // Assignment operator
+    Buyer buyer4;
+    buyer4 = buyer2;
+    cout << "Buyer 4 (Copy of Buyer 2) Details:\n" << buyer4;
 
 
 };
