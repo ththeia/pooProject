@@ -4,7 +4,7 @@
 using namespace std;
 
 
-enum TicketType { VIP, MAIN_STAGE, LOUNGE, STANDING };
+enum TicketType { VIP, LOUNGE, STANDING };
 
 class Date {
 private:
@@ -62,6 +62,7 @@ public:
     int getYear()  {
         return year;
     }
+
     friend istream& operator>>(istream& in, Date& date) {
         cout << "Enter day: ";
         in >> date.day;
@@ -361,8 +362,17 @@ public:
         seatNumber = 0;
         type = STANDING;
         price = 0;
-        rowsDesc = 0;
+        rowsDesc = NULL;
         eventDescription = nullptr;
+        ticketCounter++;
+    }
+
+    Ticket(string eventName, string buyerName, int seatNumber, TicketType type, double price) : TICKET_ID(TICKET_ID) {
+        this->eventName = eventName;
+        this->buyerName = buyerName;
+        this->seatNumber = seatNumber;
+        this->type = type;
+        this->price = price;
         ticketCounter++;
     }
 
@@ -383,34 +393,56 @@ public:
         }
         else {
             this->eventDescription = nullptr;
-        }        
-
+        }  
+        ticketCounter++;
     }
 
     Ticket(const Ticket& t) : TICKET_ID(t.TICKET_ID) {
-    this->eventName = t.eventName;
-    this->buyerName = t.buyerName;
-    this->eventDate = t.eventDate;
-    this->seatNumber = t.seatNumber;
-    this->type = t.type;
-    this->price = t.price;
-    this->rowsDesc = t.rowsDesc;
-
-    if (t.eventDescription != nullptr) {
-        this->eventDescription = new string[t.rowsDesc];
-        for (int i = 0; i < t.rowsDesc; i++) {
-            this->eventDescription[i] = t.eventDescription[i];
+        this->eventName = t.eventName;
+        this->buyerName = t.buyerName;
+        this->eventDate = t.eventDate;
+        this->duration = t.duration;
+        this->seatNumber = t.seatNumber;
+        this->type = t.type;
+        this->price = t.price;
+        this->rowsDesc = t.rowsDesc;
+        if (t.eventDescription != nullptr) {
+            this->eventDescription = new string[t.rowsDesc];
+            for (int i = 0; i < t.rowsDesc; i++) {
+                this->eventDescription[i] = t.eventDescription[i];
+            }
+        }
+        else {
+            this->eventDescription = nullptr;
         }
     }
-    else {
-        this->eventDescription = nullptr;
-    }
 
-    }
+    Ticket& operator=(const Ticket& t) {
+        if (this == &t) {
+            return *this;
+        }
+        this->eventName = t.eventName;
+        this->buyerName = t.buyerName;
+        this->eventDate = t.eventDate;
+        this->duration = t.duration;
+        this->seatNumber = t.seatNumber;
+        this->type = t.type;
+        this->price = t.price;
+        if (t.eventDescription != nullptr) {
+            this->eventDescription = new string[t.rowsDesc];
+            for (int i = 0; i < t.rowsDesc; i++) {
+                this->eventDescription[i] = t.eventDescription[i];
+            }
+        }
+        else {
+            this->eventDescription = nullptr;
+        }
 
+        return *this;
+    }
    
     ~Ticket() {
-        if (this->eventDescription != nullptr) {
+        if (eventDescription != nullptr) {
             delete[] eventDescription;
             eventDescription = nullptr;
         }
@@ -486,6 +518,7 @@ public:
             }
         }
         else {
+            this->eventDescription = nullptr;
             cout << "Invalid description.\n";
         }
     }
@@ -497,63 +530,114 @@ public:
         return newPrice;
     }
 
-    Ticket operator*(int increase) const {
-        Ticket newFee(*this);  
-        newFee.price *= increase;
-        return newFee;
+    Ticket& operator--() {
+        price = price - 10;
+        return *this;
+    }
+
+ 
+    Ticket operator--(int reducere) {
+        Ticket redus(*this);
+        price = price - 20;
+        return redus;
+    }
+
+    void displayEventDescriptions() const {
+        cout << "Event Descriptions:\n";
+        if (rowsDesc > 0 && eventDescription != nullptr) {
+            for (int i = 0; i < rowsDesc; i++) {
+                cout << "  " << eventDescription[i] << endl;
+            }
+        }
+    }
+
+    void displayTicketInfo() const {
+        cout << "Event Name: " << eventName << endl;
+        cout << "Buyer Name: " << buyerName << endl;
+        cout << "Event Date: " << eventDate << endl;
+        cout << "Duration: " << duration << endl;
+        cout << "Seat Number: " << seatNumber << endl;
+        cout << "Ticket Type: " << type << endl;
+        cout << "Price: $" << price << endl;
+        cout << "Rows: " << rowsDesc << endl;
+
+        if (rowsDesc > 0 && eventDescription != nullptr) {
+            cout << "Event Descriptions:\n";
+            for (int i = 0; i < rowsDesc; i++) {
+                cout << "  " << eventDescription[i] << endl;
+            }
+        }
+
+        if (price > 50) {
+            cout << "This ticket is expensive.\n";
+        }
+        else {
+            cout << "This ticket is not expensive.\n";
+        }
+    }
+
+    bool operator!() const {
+        return eventName.empty() || buyerName.empty() || price <= 0;
     }
 
     friend ostream& operator<<(ostream& out, Ticket& ticket) {
         out << "Event Name: " << ticket.getEventName() << endl;
         out << "Buyer Name: " << ticket.getBuyerName() << endl;
         out << "Event Date: " << ticket.getDate() << endl;
-        out << "Duration: " << ticket.getDuration() << " minutes" << endl;
+        out << "Duration: " << ticket.getDuration() << endl;
         out << "Seat Number: " << ticket.getSeatNumber() << endl;
         out << "Ticket Type: " << ticket.getTicketType() << endl;
         out << "Price: $" << ticket.getPrice() << endl;
-        out << "Row Description Count: " << ticket.getRowDesc() << endl;
+        out << "Rows: " << ticket.getRowDesc() << endl;
 
         
         if (ticket.getRowDesc() > 0 && ticket.getEventDescription() != nullptr) {
             out << "Event Descriptions:" << endl;
             for (int i = 0; i < ticket.getRowDesc(); i++) {
-                out << "  - " << ticket.getEventDescription()[i] << endl;
+                out <<  ticket.getEventDescription()[i] << endl;
             }
+        
         }
 
         return out;
     }
-    //friend istream& operator>>(istream& in, Ticket& ticket) {
-    //    int typeInt;
 
-    //    cout << "Enter ticket type (0 for VIP, 1 for MAIN_STAGE, 2 for LOUNGE, 3 for STANDING): ";
-    //    in >> typeInt;
+    
+    friend istream& operator>>(istream& in, Ticket& ticket) {
+        cout << "Enter event name: ";
+        getline(in, ticket.eventName);
+        cout << "Enter buyer name: ";
+        getline(in, ticket.buyerName);
+        cout << "Enter event date (in the format DD-MM-YYYY): ";
+        in >> ticket.eventDate;
+        cout << "Enter duration (in minutes): ";
+        in >> ticket.duration;
+        cout << "Enter seat number: ";
+        in >> ticket.seatNumber;
+        cout << "Enter ticket type (0 for VIP, 1 for LOUNGE, 2 for STANDING): ";
+        int ticketType;
+        in >> ticketType;
+        ticket.type = static_cast<TicketType>(ticketType); 
+        cout << "Enter price: $";
+        in >> ticket.price;
+        cout << "Enter the number of row descriptions: ";
+        in >> ticket.rowsDesc;
 
-    //    if (typeInt >= 0 && typeInt <= 3) {
-    //        ticket.type = static_cast<TicketType>(typeInt);
-    //    }
-    //    else {
-    //        cout << "Invalid ticket type. Setting to STANDING." << endl;
-    //        ticket.type = STANDING;
-    //    }
+        if (ticket.rowsDesc > 0) {
+            ticket.eventDescription = new string[ticket.rowsDesc];
+            in.ignore(); 
+            cout << "Enter event descriptions:\n";
+            for (int i = 0; i < ticket.rowsDesc; ++i) {
+                cout << "  Description " << i + 1 << ": ";
+                getline(in, ticket.eventDescription[i]);
+            }
+        }
+        else {
+            ticket.eventDescription = nullptr;
+        }
 
-    //    cout << "Enter seat number: ";
-    //    in >> ticket.seatNumber;
-
-    //    cout << "Enter event date: ";
-    //    in >> ticket.eventDate;
-
-    //    cout << "Enter event name: ";
-    //   // in.ignore();
-    //    getline(in, ticket.eventName);
-
-    //    cout << "Enter ticket price: ";
-    //    in >> ticket.price;
-
-    //    return in;
-    //}
-   
-
+        return in;
+    }
    
 };
 int Ticket::ticketCounter = 0;
@@ -786,20 +870,54 @@ void main() {
     cout << "Entered event details:\n" << inputEvent;*/
 
   
-    //// Test ticket class
-    //Ticket myTicket;
-    //Ticket ticket1(VIP, 1, "2023-11-05", "Event 1", 200);
-    //cout << "Ticket 1 Details:\n" << ticket1;
+     //Test ticket class
+    Ticket defaultTicket;
+    cout << "Default Ticket:\n" << defaultTicket << endl;
+    Ticket vipTicket("Ed Sheeran", "Theo", 15, VIP, 73);
+    cout << "Basic Ticket:\n" << vipTicket << endl;
 
-    //Ticket ticket2;
-    //cin >> ticket2;
+    string eventDesc[] = { "Front row", "VIP access" };
+    Ticket detailedTicket("ColdPlay", "Theo si Geo", 12, 9, 2023, 120, 25, LOUNGE, 75.5, 2, eventDesc);
+    cout << "Detailed Ticket:\n" << detailedTicket << endl;
 
-    //if (ticket2.getTotalTickets() > 0) {
-    //    cout << "Ticket 2 Details:\n" << ticket2;
-    //}
-    //else {
-    //    cout << "Invalid ticket details entered.\n";
-    //}
+    detailedTicket.displayEventDescriptions();
+
+    Ticket ticket1;
+    ticket1.setDate(12, 10, 2023);
+    ticket1.setDuration(120);
+    ticket1.setRowDesc(3);
+ 
+    Ticket originalTicket("Concert", "Mimi", 10, VIP, 22);
+    Ticket copiedTicket(originalTicket);
+    cout << "Original Ticket:\n" << originalTicket << endl;
+    cout << "Copied Ticket:\n" << copiedTicket << endl;
+
+    string eventDescr[] = { "Front row", "STANDARD ACCESS" };
+    Ticket originalTicket1("Concert", "Bob", 01, 11, 2025, 90, 20, STANDING, 99.99, 2, eventDescr);
+    Ticket copiedTicket1(originalTicket1);
+    cout << "Original Ticket1:\n" << originalTicket1 << endl;
+    cout << "Copied Ticket1:\n" << copiedTicket1 << endl;
+    
+    Ticket newprice = detailedTicket +10;
+    cout << "Discounted Ticket:\n" << newprice << endl;
+
+
+    Ticket ticket3("Untold", "eu", 10, VIP, 96.5);
+    cout << "Original:\n" << ticket3 << endl;
+    --ticket3;
+    cout << "Reduced price:\n" << ticket3 << endl;
+    Ticket newTicket(ticket3);
+    newTicket--;
+    cout << "New Ticket :\n" << newTicket << endl;
+    newTicket.displayTicketInfo();
+
+    cout << "Is Default Ticket Valid: " << (!defaultTicket ? "Invalid" : "Valid") << endl;
+    cout << "Is VIP Ticket Valid: " << (!vipTicket ? "Invalid" : "Valid") << endl;
+
+    Ticket inputTicket;
+    cout << "\nEnter ticket details:\n";
+    cin >> inputTicket;
+    cout << "Entered ticket details:\n" << inputTicket;
 
     //// Test Buyer class
     //Buyer buyer1;
