@@ -749,52 +749,70 @@ public:
 
         return *this;
     }
-    
-    string getBuyerName() {
+
+    bool operator==(const Buyer& b) const {
+        return (buyerName == b.buyerName &&
+            buyerPhoneNumber == b.buyerPhoneNumber &&
+            age == b.age &&
+            ticketId == b.ticketId);
+    }
+
+    string getBuyerName()  {
         return buyerName;
     }
 
-    
 
     string getBuyerPhoneNumber()  {
         return buyerPhoneNumber;
     }
 
-    int getAge() {
+    int getAge()  {
         return age;
     }
 
-    int getTicketId() {
+    int getTicketId()  {
         return ticketId;
     }
-
-    void setBuyerName(string name) {
-        buyerName = name;
+    int getMinimumAge()  {
+        return MINIMUM_AGE;
     }
 
-   
-
-    void setBuyerPhoneNumber(string phoneNumber) {
-        buyerPhoneNumber = phoneNumber;
+    static string getEventName() {
+        return eventName;
     }
 
-    void setAge(int newAge) {
-        if (newAge >= 14) {
-            age = newAge;
+
+    static void setEventName(string& newEventName) {
+        if (!newEventName.empty()) {
+            eventName = newEventName;
         }
         else {
-            cout << "Error: Only people above 14 can participate to this event." << endl;
+            cout << "Error: Event name cannot be empty." << endl;
+            
         }
     }
 
-    void setTicketId(int newTicketId) {
-        ticketId = newTicketId;
+    void setBuyerName(string& newBuyerName) {
+        if (!newBuyerName.empty()) {
+            buyerName = newBuyerName;
+        }
+        else {
+            cout << "Error: Buyer name cannot be empty." << endl;
+        }
+    }
+
+
+    Buyer operator+(string& countryCode) {
+        Buyer newBuyer = *this;
+        newBuyer.buyerPhoneNumber = countryCode + newBuyer.buyerPhoneNumber;
+
+        return newBuyer;
     }
 
     
-    friend ostream& operator<<(ostream& out, const Buyer& buyer) {
+    friend ostream& operator<<(ostream& out, Buyer& buyer) {
         out << "Buyer Name: " << buyer.buyerName << endl;
-        out << "Buyer Email: " << buyer.buyerEmail << endl;
+        out << "Buyer Email: " << (buyer.buyerEmail ? buyer.buyerEmail : "N/A") << endl;
         out << "Buyer Phone Number: " << buyer.buyerPhoneNumber << endl;
         out << "Age: " << buyer.age << endl;
         out << "Ticket ID: " << buyer.ticketId << endl;
@@ -803,10 +821,16 @@ public:
 
     friend istream& operator>>(istream& in, Buyer& buyer) {
         cout << "Enter buyer name: ";
-       // in.ignore(); 
         getline(in, buyer.buyerName);
+
+        char* tempEmail = new char[256]; 
         cout << "Enter buyer email: ";
-      //  getline(in, buyer.buyerEmail);
+       // in.ignore(); 
+        in.getline(tempEmail, 256);
+        buyer.buyerEmail = new char[strlen(tempEmail) + 1];
+        strcpy_s(buyer.buyerEmail, strlen(tempEmail) + 1, tempEmail);
+        delete[] tempEmail;
+
         cout << "Enter buyer phone number: ";
         getline(in, buyer.buyerPhoneNumber);
         cout << "Enter age: ";
@@ -817,6 +841,7 @@ public:
         return in;
     }
 };
+string Buyer::eventName = "Default";
 
 
 void main() {
@@ -884,7 +909,7 @@ void main() {
 
     Event opPPtest("Opp", 1, 1, 2023, 60, 100);
     cout << "Initial Seats: " << opPPtest.getMaxSeats() << endl;
-    ++opPPtest; 
+    ++opPPtest;
     cout << "Updated Seats: " << opPPtest.getMaxSeats() << endl;
 
 
@@ -917,8 +942,8 @@ void main() {
     cin >> inputEvent;
     cout << "Entered event details:\n" << inputEvent;*/
 
-  
-     //Test ticket class
+
+    //Test ticket class
     Ticket defaultTicket;
     cout << "Default Ticket:\n" << defaultTicket << endl;
     Ticket vipTicket("Ed Sheeran", "Theo", 15, VIP, 73);
@@ -934,7 +959,7 @@ void main() {
     ticket1.setDate(12, 10, 2023);
     ticket1.setDuration(120);
     ticket1.setRowDesc(3);
- 
+
     Ticket originalTicket("Concert", "Mimi", 10, VIP, 22);
     Ticket copiedTicket(originalTicket);
     cout << "Original Ticket:\n" << originalTicket << endl;
@@ -945,8 +970,8 @@ void main() {
     Ticket copiedTicket1(originalTicket1);
     cout << "Original Ticket1:\n" << originalTicket1 << endl;
     cout << "Copied Ticket1:\n" << copiedTicket1 << endl;
-    
-    Ticket newprice = detailedTicket +10;
+
+    Ticket newprice = detailedTicket + 10;
     cout << "Discounted Ticket:\n" << newprice << endl;
 
 
@@ -971,18 +996,23 @@ void main() {
 
     // Test Buyer class
     Buyer buyer1;
-    cin >> buyer1;
 
-    cout << "Buyer 1 Details:\n" << buyer1;
+    const char* email = "buyer1@example.com";
+    Buyer buyer2("miiii mi", email, "123-456-7890", 25, 1);
 
-  
-   
+    Buyer buyer3("ssss mm", "987-654-3210", 30);
+    Buyer buyer4 = buyer3;
+    if (buyer3 == buyer4) {
+        cout << "Buyer 3 and Buyer 4 are equal.\n";
+    }
+    else {
+        cout << "Buyer 3 and Buyer 4 are not equal.\n";
+    }
 
-
-    // Assignment operator
-  /*  Buyer buyer4;
-    buyer4 = buyer2;
-    cout << "Buyer 4 (Copy of Buyer 2) Details:\n" << buyer4;*/
-
-
+    cout << "Buyer 1 Name: " << buyer1.getBuyerName() << endl;
+    cout << "Buyer 2 Age: " << buyer2.getAge() << endl;
+    string countryCode = "+1";
+    Buyer newBuyer = buyer2 + countryCode;
+    cout << "Buyer 2 with updated phone number: " << newBuyer << endl;
+    
 };
