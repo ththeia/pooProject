@@ -580,7 +580,7 @@ public:
         return eventName.empty() || buyerName.empty() || price <= 0;
     }
 
-   /* Ticket operator==(Ticket& t1, Ticket& t2) {
+   /* bool operator==(const Ticket& t1, const Ticket& t2) {
         return t1.getEventName() == t2.getEventName() &&
             t1.getBuyerName() == t2.getBuyerName() &&
             t1.getDate() == t2.getDate() &&
@@ -666,33 +666,57 @@ int Ticket::ticketCounter = 0;
 class Buyer {
 private:
     string buyerName;
-    string buyerEmail;
+    char* buyerEmail;
     string buyerPhoneNumber;
     int age;
     int ticketId;
+    const int MINIMUM_AGE = 14;
+
+    static string eventName;
 
 public:
-   
-    Buyer() {
+
+    Buyer() : MINIMUM_AGE(14) {
         buyerName = "";
-        buyerEmail = "";
+        buyerEmail = nullptr;
         buyerPhoneNumber = "";
         age = 0;
         ticketId = 0;
     }
 
-    Buyer(string name, string email, string phoneNumber, int age, int ticketId) {
+    Buyer(string name, const char* email, string phoneNumber, int age, int ticketId): MINIMUM_AGE(MINIMUM_AGE) {
         buyerName = name;
-        buyerEmail = email;
+
+        if (email != nullptr) {
+            buyerEmail = new char[strlen(email) + 1];
+            strcpy_s(buyerEmail, strlen(email) + 1, email);
+        }
+        else {
+            buyerEmail = nullptr; 
+        }
         buyerPhoneNumber = phoneNumber;
         this->age = age;
         this->ticketId = ticketId;
     }
 
-    
-    Buyer(const Buyer& b) {
+    Buyer(string name, string phoneNumber, int age) {
+        buyerName = name;
+        buyerPhoneNumber = phoneNumber;
+        this->age = age;
+          
+    }
+
+    Buyer(const Buyer& b) : MINIMUM_AGE(b.MINIMUM_AGE) {
         buyerName = b.buyerName;
-        buyerEmail = b.buyerEmail;
+
+        if (b.buyerEmail != nullptr) {
+            buyerEmail = new char[strlen(b.buyerEmail) + 1];
+            strcpy_s(buyerEmail, strlen(b.buyerEmail) + 1, b.buyerEmail);
+        }
+        else {
+            buyerEmail = nullptr;
+        }
+
         buyerPhoneNumber = b.buyerPhoneNumber;
         age = b.age;
         ticketId = b.ticketId;
@@ -700,17 +724,37 @@ public:
 
     
     ~Buyer() {
-        
+        if (buyerEmail != nullptr) {
+            delete[]buyerEmail;
+            this->buyerEmail = nullptr;
+        }
     }
 
+    Buyer& operator=(const Buyer& b) {
+        if (this == &b) {
+            return *this;
+        }
+        buyerName = b.buyerName;
+        delete[] buyerEmail;
+        if (b.buyerEmail != nullptr) {
+            buyerEmail = new char[strlen(b.buyerEmail) + 1];
+            strcpy_s(buyerEmail, strlen(b.buyerEmail) + 1, b.buyerEmail);
+        }
+        else {
+            buyerEmail = nullptr;
+        }
+        buyerPhoneNumber = b.buyerPhoneNumber;
+        age = b.age;
+        ticketId = b.ticketId;
+
+        return *this;
+    }
     
     string getBuyerName() {
         return buyerName;
     }
 
-    string getBuyerEmail() {
-        return buyerEmail;
-    }
+    
 
     string getBuyerPhoneNumber()  {
         return buyerPhoneNumber;
@@ -728,9 +772,7 @@ public:
         buyerName = name;
     }
 
-    void setBuyerEmail(string email) {
-        buyerEmail = email;
-    }
+   
 
     void setBuyerPhoneNumber(string phoneNumber) {
         buyerPhoneNumber = phoneNumber;
@@ -750,21 +792,6 @@ public:
     }
 
     
-    Buyer& operator=(const Buyer& b) {
-        if (this == &b) {
-            return *this;
-        }
-
-        buyerName = b.buyerName;
-        buyerEmail = b.buyerEmail;
-        buyerPhoneNumber = b.buyerPhoneNumber;
-        age = b.age;
-        ticketId = b.ticketId;
-
-        return *this;
-    }
-
-    
     friend ostream& operator<<(ostream& out, const Buyer& buyer) {
         out << "Buyer Name: " << buyer.buyerName << endl;
         out << "Buyer Email: " << buyer.buyerEmail << endl;
@@ -779,7 +806,7 @@ public:
        // in.ignore(); 
         getline(in, buyer.buyerName);
         cout << "Enter buyer email: ";
-        getline(in, buyer.buyerEmail);
+      //  getline(in, buyer.buyerEmail);
         cout << "Enter buyer phone number: ";
         getline(in, buyer.buyerPhoneNumber);
         cout << "Enter age: ";
@@ -937,10 +964,10 @@ void main() {
 
 
     //test istream ticket
-    Ticket inputTicket;
+    /*Ticket inputTicket;
     cout << "\nEnter ticket details:\n";
     cin >> inputTicket;
-    cout << "Entered ticket details:\n" << inputTicket;
+    cout << "Entered ticket details:\n" << inputTicket;*/
 
     // Test Buyer class
     Buyer buyer1;
@@ -948,14 +975,14 @@ void main() {
 
     cout << "Buyer 1 Details:\n" << buyer1;
 
-    Buyer buyer2("John Doe", "john@yahoo.com", "1234567890", 25, 101);
-    cout << "Buyer 2 Details:\n" << buyer2;
+  
+   
 
 
     // Assignment operator
-    Buyer buyer4;
+  /*  Buyer buyer4;
     buyer4 = buyer2;
-    cout << "Buyer 4 (Copy of Buyer 2) Details:\n" << buyer4;
+    cout << "Buyer 4 (Copy of Buyer 2) Details:\n" << buyer4;*/
 
 
 };
