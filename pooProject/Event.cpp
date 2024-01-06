@@ -661,6 +661,78 @@ public:
         return in;
     }
 
+    void serialize(ofstream& file)  {
+        
+        file.write((char*)&seatNumber, sizeof(seatNumber));
+        file.write((char*)&duration, sizeof(duration));
+        file.write((char*)&type, sizeof(type));
+        file.write((char*)&price, sizeof(price));
+
+        
+        int eventNameSize = eventName.size();
+        file.write((char*)&eventNameSize, sizeof(eventNameSize));
+        file.write(eventName.c_str(), eventNameSize);
+
+      
+        int buyerNameSize = buyerName.size();
+        file.write((char*)&buyerNameSize, sizeof(buyerNameSize));
+        file.write(buyerName.c_str(), buyerNameSize);
+
+        int day = eventDate.getDay();
+        int month = eventDate.getMonth();
+        int year = eventDate.getYear();
+        file.write((char*)&day, sizeof(day));
+        file.write((char*)&month, sizeof(month));
+        file.write((char*)&year, sizeof(year));
+
+
+       
+        file.write((char*)&rowsDesc, sizeof(rowsDesc));
+        for (int i = 0; i < rowsDesc; i++) {
+            int descSize = eventDescription[i].size();
+            file.write((char*)&descSize, sizeof(descSize));
+            file.write(eventDescription[i].c_str(), descSize);
+        }
+    }
+
+   
+    void deserialize(ifstream& file) {
+        
+        file.read((char*)&seatNumber, sizeof(seatNumber));
+        file.read((char*)&duration, sizeof(duration));
+        file.read((char*)&type, sizeof(type));
+        file.read((char*)&price, sizeof(price));
+
+      
+        int eventNameSize;
+        file.read((char*)&eventNameSize, sizeof(eventNameSize));
+        eventName.resize(eventNameSize);
+        file.read(&eventName[0], eventNameSize);
+
+      
+        int buyerNameSize;
+        file.read((char*)&buyerNameSize, sizeof(buyerNameSize));
+        buyerName.resize(buyerNameSize);
+        file.read(&buyerName[0], buyerNameSize);
+
+    
+        int day, month, year;
+        file.read((char*)&day, sizeof(day));
+        file.read((char*)&month, sizeof(month));
+        file.read((char*)&year, sizeof(year));
+        eventDate = Date(day, month, year);
+
+      
+        file.read((char*)&rowsDesc, sizeof(rowsDesc));
+        delete[] eventDescription; 
+        eventDescription = new std::string[rowsDesc];
+        for (int i = 0; i < rowsDesc; i++) {
+            int descSize;
+            file.read((char*)&descSize, sizeof(descSize));
+            eventDescription[i].resize(descSize);
+            file.read(&eventDescription[i][0], descSize);
+        }
+    }
 
    
 };
