@@ -334,6 +334,61 @@ public:
         return out;
     }
 
+    void Event::serialize(ofstream& file) {
+     
+        int nameLength = name.length();
+        file.write((char*)&nameLength, sizeof(nameLength));
+        file.write(name.c_str(), nameLength);
+
+      
+        file.write((char*)&date.day, sizeof(date.day));
+        file.write((char*)&date.month, sizeof(date.month));
+        file.write((char*)&date.year, sizeof(date.year));
+
+       
+        file.write((char*)&duration, sizeof(duration));
+
+       
+        file.write((char*)&seats, sizeof(seats));
+
+      
+        if (seatNumbers != nullptr) {
+            for (int i = 0; i < seats; ++i) {
+                file.write((char*)&seatNumbers[i], sizeof(seatNumbers[i]));
+            }
+        }
+    }
+
+
+    void Event::deserialize(ifstream& file) {
+        
+        int nameLength;
+        file.read((char*)&nameLength, sizeof(nameLength));
+        char* nameBuffer = new char[nameLength + 1];
+        file.read(nameBuffer, nameLength);
+        nameBuffer[nameLength] = '\0';
+        name = string(nameBuffer);
+        delete[] nameBuffer;
+
+        
+        file.read((char*)&date.day, sizeof(date.day));
+        file.read((char*)&date.month, sizeof(date.month));
+        file.read((char*)&date.year, sizeof(date.year));
+
+       
+        file.read((char*)&duration, sizeof(duration));
+
+        
+        file.read((char*)&seats, sizeof(seats));
+
+        
+        delete[] seatNumbers; 
+        seatNumbers = new int[seats];
+        for (int i = 0; i < seats; ++i) {
+            file.read((char*)&seatNumbers[i], sizeof(seatNumbers[i]));
+        }
+    }
+
 };
 int Event::totalEvents = 0;
 
@@ -915,6 +970,65 @@ public:
 
         return in;
     }
+
+    void Buyer::serialize(ofstream& file) {
+
+        int buyerNameLength = buyerName.length();
+        file.write((char*)&buyerNameLength, sizeof(buyerNameLength));
+        file.write(buyerName.c_str(), buyerNameLength);
+
+
+        int emailLength = buyerEmail ? strlen(buyerEmail) : 0;
+        file.write((char*)&emailLength, sizeof(emailLength));
+        if (emailLength > 0) {
+            file.write(buyerEmail, emailLength);
+        }
+
+
+        int phoneNumberLength = buyerPhoneNumber.length();
+        file.write((char*)&phoneNumberLength, sizeof(phoneNumberLength));
+        file.write(buyerPhoneNumber.c_str(), phoneNumberLength);
+
+
+        file.write((char*)&age, sizeof(age));
+        file.write((char*)&ticketId, sizeof(ticketId));
+
+    }
+
+    void Buyer::deserialize(ifstream& file) {
+        
+        int buyerNameLength;
+        file.read((char*)&buyerNameLength, sizeof(buyerNameLength));
+        char* nameBuffer = new char[buyerNameLength + 1];
+        file.read(nameBuffer, buyerNameLength);
+        nameBuffer[buyerNameLength] = '\0';
+        buyerName = string(nameBuffer);
+        delete[] nameBuffer;
+
+       
+        int emailLength;
+        file.read((char*)&emailLength, sizeof(emailLength));
+        if (emailLength > 0) {
+            delete[] buyerEmail;
+            buyerEmail = new char[emailLength + 1];
+            file.read(buyerEmail, emailLength);
+            buyerEmail[emailLength] = '\0';
+        }
+
+        int phoneNumberLength;
+        file.read((char*)&phoneNumberLength, sizeof(phoneNumberLength));
+        char* phoneNumberBuffer = new char[phoneNumberLength + 1];
+        file.read(phoneNumberBuffer, phoneNumberLength);
+        phoneNumberBuffer[phoneNumberLength] = '\0';
+        buyerPhoneNumber = string(phoneNumberBuffer);
+        delete[] phoneNumberBuffer;
+
+    
+        file.read((char*)&age, sizeof(age));
+        file.read((char*)&ticketId, sizeof(ticketId));
+    }
+
+
 };
 string Buyer::eventName = "Default";
 
@@ -1017,6 +1131,23 @@ void main() {
     cin >> inputEvent;
     cout << "Entered event details:\n" << inputEvent;*/
 
+    Event eventS("Concert", 10, 8, 2023, 120, 50);
+    ofstream outFile("event.bin", ios::binary);
+    if (outFile.is_open()) {
+        eventS.serialize(outFile);
+        outFile.close();
+    }
+
+    Event eventD;
+    ifstream inFile("event.bin", ios::binary);
+    if (inFile.is_open()) {
+        eventD.deserialize(inFile);
+        inFile.close();
+    }
+
+    // Display deserialized data
+    cout << "Deserialized Event Data:" << endl;
+    event2.displayEventInfo();
 
     //Test ticket class
     Ticket defaultTicket;
@@ -1089,5 +1220,23 @@ void main() {
     string countryCode = "+1";
     Buyer newBuyer = buyer2 + countryCode;
     cout << "Buyer 2 with updated phone number: " << newBuyer << endl;
+
+    Buyer buyerS("Nume Prenume", "adressa@gmail.com", "129-313-0990", 30, 1);
+    ofstream outFile("buyer.bin", ios::binary);
+    if (outFile.is_open()) {
+        buyerS.serialize(outFile);
+        outFile.close();
+    }
+
+    Buyer buyerD;
+    ifstream inFile("buyer.bin", ios::binary);
+    if (inFile.is_open()) {
+        buyer2.deserialize(inFile);
+        inFile.close();
+    }
+
+    // Display deserialized data
+    cout << "Deserialized Buyer Data:" << endl;
+    buyerD.displayInfo();
     
 };
